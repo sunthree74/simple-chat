@@ -12,7 +12,7 @@ import (
 var _ interfaces.MessageRepository = (*messageRepository)(nil)
 
 type messageRepository struct {
-	db            *gorm.DB
+	db *gorm.DB
 }
 
 func (m *messageRepository) GetByConversationID(ctx context.Context, conversationID uint) ([]responses.Message, error) {
@@ -33,12 +33,12 @@ func (m *messageRepository) GetByConversationID(ctx context.Context, conversatio
 	return messages, nil
 }
 
-func (m *messageRepository) Create(ctx context.Context, message model.Message) error {
+func (m *messageRepository) Create(ctx context.Context, message model.Message) (model.Message, error) {
 	if err := m.db.WithContext(ctx).Save(&message).Error; err != nil {
-		return fmt.Errorf("save query error: %w", err)
+		return model.Message{}, nil
 	}
 
-	return nil
+	return message, nil
 }
 
 func InitializeMessage(db *gorm.DB) *messageRepository {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/sunthree74/simple-chat/interfaces"
 	"github.com/sunthree74/simple-chat/model"
+	"github.com/sunthree74/simple-chat/structs/responses"
 )
 
 var _ interfaces.ConversationUsecase = (*conversationUsecase)(nil)
@@ -38,8 +39,14 @@ func (c *conversationUsecase) Create(ctx context.Context, conversation model.Con
 	return nil, cnv
 }
 
-func (c *conversationUsecase) GetByUserID(ctx context.Context, userID uint) ([]model.Conversation, error) {
-	panic("implement me")
+func (c *conversationUsecase) GetByUserID(ctx context.Context, userID uint) ([]responses.Conversation, error) {
+	var cnv []responses.Conversation
+	cnv, err := c.conversationRepo.GetByUserID(ctx, userID)
+	if err != nil {
+		return []responses.Conversation{}, err
+	}
+
+	return cnv, nil
 }
 
 func (c *conversationUsecase) GetByReceiverID(ctx context.Context, receiverID uint) (model.Conversation, error) {

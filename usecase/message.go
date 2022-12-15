@@ -10,7 +10,7 @@ import (
 var _ interfaces.MessageUsecase = (*messageUsecase)(nil)
 
 type messageUsecase struct {
-	messageRepo interfaces.MessageRepository
+	messageRepo      interfaces.MessageRepository
 	conversationRepo interfaces.ConversationRepository
 }
 
@@ -25,19 +25,19 @@ func (m *messageUsecase) GetByConversationID(ctx context.Context, conversationID
 }
 
 func (m *messageUsecase) Create(ctx context.Context, message model.Message) error {
-	err := m.messageRepo.Create(ctx, message)
+	msg, err := m.messageRepo.Create(ctx, message)
 	if err != nil {
-		return err
+		return nil
 	}
 
-	err = m.conversationRepo.IncrementUnreadCount(ctx, message.ConversationID)
+	err = m.conversationRepo.IncrementUnreadCount(ctx, message.ConversationID, msg.ID)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	return nil
 }
 
-func InitializeMessage(messageRepo    interfaces.MessageRepository, conversationRepo interfaces.ConversationRepository) *messageUsecase {
+func InitializeMessage(messageRepo interfaces.MessageRepository, conversationRepo interfaces.ConversationRepository) *messageUsecase {
 	return &messageUsecase{messageRepo: messageRepo, conversationRepo: conversationRepo}
 }

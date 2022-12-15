@@ -56,6 +56,7 @@ func main() {
 
 	conversationRoute := router.Group("/conversation")
 	{
+		conversationRoute.GET("/me/:id", conversationHandler.GetConversationByUser())
 		conversationRoute.GET("/read/:id", conversationHandler.ReadConversation())
 	}
 

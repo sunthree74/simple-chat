@@ -5,6 +5,7 @@ import (
 	"github.com/sunthree74/simple-chat/interfaces"
 	"github.com/sunthree74/simple-chat/model"
 	"github.com/sunthree74/simple-chat/structs/requests"
+	"github.com/sunthree74/simple-chat/structs/responses"
 	"net/http"
 	"strconv"
 )
@@ -34,7 +35,7 @@ func (c *conversationHandler) StartConversation() gin.HandlerFunc {
 
 		var conversation model.Conversation
 		conversation.ReceiverID = form.ReceiverID
-		conversation.UserID = form.ReceiverID
+		conversation.UserID = form.UserID
 		err, conversation := c.conversationUsecase.Create(ctx, conversation)
 		if err != nil {
 			ctx.Error(err)
@@ -72,6 +73,27 @@ func (c *conversationHandler) ReadConversation() gin.HandlerFunc {
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"success": true, "status": http.StatusOK, "message": "Pesan Terbaca"})
+		return
+	}
+}
+
+func (c *conversationHandler) GetConversationByUser() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "data": nil})
+			return
+		}
+
+		var cnv []responses.Conversation
+		cnv, err = c.conversationUsecase.GetByUserID(ctx, uint(id))
+		if err != nil {
+			ctx.Error(err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"success": false, "status": http.StatusBadRequest, "message": err})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"success": true, "status": http.StatusOK, "data": cnv})
 		return
 	}
 }

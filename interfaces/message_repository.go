@@ -8,5 +8,5 @@ import (
 
 type MessageRepository interface {
 	GetByConversationID(ctx context.Context, conversationID uint) ([]responses.Message, error)
-	Create(ctx context.Context, message model.Message) error
+	Create(ctx context.Context, message model.Message) (model.Message, error)
 }
