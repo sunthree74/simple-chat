@@ -9,7 +9,16 @@ import (
 var _ interfaces.ConversationUsecase = (*conversationUsecase)(nil)
 
 type conversationUsecase struct {
-	conversationRepo    interfaces.ConversationRepository
+	conversationRepo interfaces.ConversationRepository
+}
+
+func (c *conversationUsecase) EmptyUnreadCount(ctx context.Context, id uint) error {
+	err := c.conversationRepo.EmptyUnreadCount(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *conversationUsecase) Create(ctx context.Context, conversation model.Conversation) (error, model.Conversation) {
@@ -37,6 +46,6 @@ func (c *conversationUsecase) GetByReceiverID(ctx context.Context, receiverID ui
 	panic("implement me")
 }
 
-func InitializeConversation(conversationRepo    interfaces.ConversationRepository) *conversationUsecase {
+func InitializeConversation(conversationRepo interfaces.ConversationRepository) *conversationUsecase {
 	return &conversationUsecase{conversationRepo: conversationRepo}
 }
